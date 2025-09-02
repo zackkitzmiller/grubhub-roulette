@@ -1,0 +1,49 @@
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Windows batch files need CRLF
+[*.bat]
+end_of_line = crlf
+
+# Python files - typically use 4 spaces
+[*.{py,pyw,ipynb}]
+indent_size = 4
+
+# PHP files - typically use 4 spaces
+[*.{php,phtml,phps}]
+indent_size = 4
+
+# Rust files - typically use 4 spaces
+[*.{rs,toml}]
+indent_size = 4
+
+# Elixir files
+[*.{ex,exs,eex,heex,leex}]
+indent_size = 2
+
+# Ruby and related files (already 2 spaces from default)
+[*.{rb,erb,ru,rake,gemspec}]
+indent_size = 2
+
+# Web and configuration files (already 2 spaces from default)
+[*.{yml,yaml,haml,jbuilder,jsx,html,sls,tf}]
+indent_size = 2
+
+# Makefiles require tabs
+[{*[Mm]akefile*,*.mak,*.mk,depend}]
+indent_style = tab
+
+# Specific directories
+[enc/*]
+indent_size = 2
+
+[reg*.[ch]]
+indent_size = 2

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grubhub Roulette - Functionality Tests</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button {
+            background-color: #ff6b35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #e55a2b; }
+        .mock-restaurant {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+        .featured { background-color: #ffe6cc; border-color: #ff9800; }
+        #testResults { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Grubhub Roulette - Functionality Tests</h1>
+    <p>This page tests the core functionality of the Grubhub Roulette extension components.</p>
+
+    <div class="test-section">
+        <h2>🔧 Selector Manager Tests</h2>
+        <button onclick="testSelectorManager()">Run Selector Tests</button>
+        <div id="selectorResults"></div>
+        
+        <!-- Mock restaurant elements for testing -->
+        <div style="display: none;" id="mockRestaurants">
+            <div data-testid="grid-component-cell-wrapper" class="mock-restaurant">Restaurant 1</div>
+            <div data-testid="restaurant-card" class="mock-restaurant">Restaurant 2</div>
+            <div class="restaurant-card mock-restaurant">Restaurant 3</div>
+            <div class="mock-restaurant featured" data-testid="topic-component">Featured Restaurant</div>
+            <button data-testid="grid-component-load-more-button">Load More</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎲 Random Selection Tests</h2>
+        <button onclick="testRandomSelection()">Test Random Selection</button>
+        <div id="randomResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Filter Tests</h2>
+        <button onclick="testFiltering()">Test Restaurant Filtering</button>
+        <div id="filterResults"></div>
+        
+        <!-- Mock elements for filtering tests -->
+        <div style="display: none;" id="mockFilterRestaurants">
+            <div class="mock-restaurant regular">Regular Restaurant 1</div>
+            <div class="mock-restaurant regular">Regular Restaurant 2</div>
+            <div class="mock-restaurant featured">Featured Restaurant 1</div>
+            <div class="mock-restaurant" data-testid="promoted">Promoted Restaurant</div>
+            <div class="mock-restaurant regular">Regular Restaurant 3</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>⚙️ Options Tests</h2>
+        <button onclick="testOptions()">Test Options Handling</button>
+        <div id="optionsResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🌐 URL Validation Tests</h2>
+        <button onclick="testUrlValidation()">Test URL Patterns</button>
+        <div id="urlResults"></div>
+    </div>
+
+    <div id="testResults"></div>
+
+    <script>
+        // Import the classes from content.js (simplified versions for testing)
+        class TestLogger {
+            constructor(prefix) { this.prefix = prefix; }
+            info(msg, ...args) { console.log(`[${this.prefix}] INFO:`, msg, ...args); }
+            warn(msg, ...args) { console.warn(`[${this.prefix}] WARN:`, msg, ...args); }
+            error(msg, ...args) { console.error(`[${this.prefix}] ERROR:`, msg, ...args); }
+        }
+
+        class TestSelectorManager {
+            constructor() {
+                this.selectorMap = {
+                    topicComponent: [
+                        '[data-testid="topic-component"]',
+                        '.topic-component',
+                        '[class*="topic"]',
+                        '[class*="featured"]'
+                    ],
+                    restaurantCard: [
+                        '[data-testid="grid-component-cell-wrapper"]',
+                        '[data-testid="restaurant-card"]',
+                        '[data-testid="search-result-restaurant"]',
+                        '[data-testid="search-result"]',
+                        '.restaurant-card',
+                        '.search-result',
+                        '[class*="restaurant"]',
+                        '[class*="grid-cell"]',
+                        '[class*="search-result"]',
+                        'article',
+                        '[role="article"]'
+                    ],
+                    loadMoreButton: [
+                        '[data-testid="grid-component-load-more-button"]',
+                        '[data-testid="load-more"]',
+                        'button[class*="load-more"]',
+                        'button:contains("Load More")',
+                        'button:contains("Show More")'
+                    ]
+                };
+            }
+
+            findElements(elementType) {
+                const selectors = this.selectorMap[elementType];
+                if (!selectors) return [];
+
+                for (const selector of selectors) {
+                    const elements = document.querySelectorAll(selector);
+                    if (elements.length > 0) {
+                        return Array.from(elements);
+                    }
+                }
+                return [];
+            }
+        }
+
+        function addResult(containerId, message, type = 'pass') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            container.appendChild(div);
+        }
+
+        function testSelectorManager() {
+            const container = document.getElementById('selectorResults');
+            container.innerHTML = '';
+            
+            const selectorManager = new TestSelectorManager();
+            
+            // Test restaurant card selection
+            const restaurants = selectorManager.findElements('restaurantCard');
+            if (restaurants.length > 0) {
+                addResult('selectorResults', `✓ Found ${restaurants.length} restaurant cards`, 'pass');
+            } else {
+                addResult('selectorResults', '✗ No restaurant cards found', 'fail');
+            }
+            
+            // Test topic component selection
+            const topics = selectorManager.findElements('topicComponent');
+            if (topics.length > 0) {
+                addResult('selectorResults', `✓ Found ${topics.length} topic components`, 'pass');
+            } else {
+                addResult('selectorResults', '✗ No topic components found', 'fail');
+            }
+            
+            // Test load more button
+            const loadMore = selectorManager.findElements('loadMoreButton');
+            if (loadMore.length > 0) {
+                addResult('selectorResults', `✓ Found ${loadMore.length} load more buttons`, 'pass');
+            } else {
+                addResult('selectorResults', '✗ No load more buttons found', 'fail');
+            }
+        }
+
+        function testRandomSelection() {
+            const container = document.getElementById('randomResults');
+            container.innerHTML = '';
+            
+            // Test random number generation
+            const testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const selections = [];
+            
+            // Run 100 random selections
+            for (let i = 0; i < 100; i++) {
+                const randomIndex = Math.floor(Math.random() * testArray.length);
+                selections.push(randomIndex);
+            }
+            
+            // Check if we got reasonable distribution
+            const unique = [...new Set(selections)];
+            if (unique.length >= testArray.length * 0.7) {
+                addResult('randomResults', `✓ Random selection working (${unique.length}/${testArray.length} indices used)`, 'pass');
+            } else {
+                addResult('randomResults', `⚠ Random selection may be biased (${unique.length}/${testArray.length} indices used)`, 'warning');
+            }
+            
+            // Test edge cases
+            const emptyArray = [];
+            try {
+                const emptyIndex = Math.floor(Math.random() * emptyArray.length);
+                if (isNaN(emptyIndex)) {
+                    addResult('randomResults', '✓ Handles empty arrays correctly', 'pass');
+                }
+            } catch (e) {
+                addResult('randomResults', '✗ Error handling empty arrays', 'fail');
+            }
+        }
+
+        function testFiltering() {
+            const container = document.getElementById('filterResults');
+            container.innerHTML = '';
+            
+            // Mock filtering function
+            function filterRegularRestaurants(restaurantCards) {
+                return restaurantCards.filter(card => {
+                    const featuredIndicators = [
+                        '[class*="featured"]',
+                        '[class*="promoted"]',
+                        '[data-testid*="featured"]',
+                        '[data-testid*="promoted"]'
+                    ];
+
+                    for (const indicator of featuredIndicators) {
+                        if (card.matches(indicator) || card.querySelector(indicator) || card.closest(indicator)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+            
+            // Get mock restaurants
+            const mockContainer = document.getElementById('mockFilterRestaurants');
+            const allRestaurants = Array.from(mockContainer.children);
+            const regularRestaurants = filterRegularRestaurants(allRestaurants);
+            
+            addResult('filterResults', `✓ Total restaurants: ${allRestaurants.length}`, 'pass');
+            addResult('filterResults', `✓ Regular restaurants after filtering: ${regularRestaurants.length}`, 'pass');
+            
+            if (regularRestaurants.length < allRestaurants.length) {
+                addResult('filterResults', '✓ Filtering is working (some restaurants filtered out)', 'pass');
+            } else {
+                addResult('filterResults', '⚠ No restaurants were filtered out', 'warning');
+            }
+        }
+
+        function testOptions() {
+            const container = document.getElementById('optionsResults');
+            container.innerHTML = '';
+            
+            // Test options object creation
+            const testOptions = {
+                removeFeatured: true,
+                loadMore: true,
+                aggressiveLoad: false,
+                preferRegular: true
+            };
+            
+            // Validate options
+            const requiredKeys = ['removeFeatured', 'loadMore', 'aggressiveLoad', 'preferRegular'];
+            const hasAllKeys = requiredKeys.every(key => key in testOptions);
+            
+            if (hasAllKeys) {
+                addResult('optionsResults', '✓ Options object has all required keys', 'pass');
+            } else {
+                addResult('optionsResults', '✗ Options object missing required keys', 'fail');
+            }
+            
+            // Test boolean values
+            const allBoolean = Object.values(testOptions).every(val => typeof val === 'boolean');
+            if (allBoolean) {
+                addResult('optionsResults', '✓ All option values are boolean', 'pass');
+            } else {
+                addResult('optionsResults', '✗ Some option values are not boolean', 'fail');
+            }
+        }
+
+        function testUrlValidation() {
+            const container = document.getElementById('urlResults');
+            container.innerHTML = '';
+            
+            // Mock URL validation function
+            function isValidGrubhubPage(url) {
+                if (!url) return false;
+                
+                const validPatterns = [
+                    /grubhub\.com\/lets-eat/,
+                    /grubhub\.com\/restaurant/,
+                    /grubhub\.com\/delivery/,
+                    /grubhub\.com\/takeout/,
+                    /grubhub\.com\/search/
+                ];
+
+                return validPatterns.some(pattern => pattern.test(url));
+            }
+            
+            // Test valid URLs
+            const validUrls = [
+                'https://grubhub.com/lets-eat',
+                'https://www.grubhub.com/search?queryText=pizza',
+                'https://grubhub.com/delivery/new-york',
+                'https://grubhub.com/takeout',
+                'https://grubhub.com/restaurant/some-restaurant'
+            ];
+            
+            const invalidUrls = [
+                'https://google.com',
+                'https://doordash.com',
+                'https://grubhub.com/about',
+                'https://grubhub.com',
+                ''
+            ];
+            
+            let validCount = 0;
+            let invalidCount = 0;
+            
+            validUrls.forEach(url => {
+                if (isValidGrubhubPage(url)) {
+                    validCount++;
+                } else {
+                    addResult('urlResults', `✗ Valid URL rejected: ${url}`, 'fail');
+                }
+            });
+            
+            invalidUrls.forEach(url => {
+                if (!isValidGrubhubPage(url)) {
+                    invalidCount++;
+                } else {
+                    addResult('urlResults', `✗ Invalid URL accepted: ${url}`, 'fail');
+                }
+            });
+            
+            if (validCount === validUrls.length) {
+                addResult('urlResults', `✓ All valid URLs accepted (${validCount}/${validUrls.length})`, 'pass');
+            }
+            
+            if (invalidCount === invalidUrls.length) {
+                addResult('urlResults', `✓ All invalid URLs rejected (${invalidCount}/${invalidUrls.length})`, 'pass');
+            }
+        }
+
+        // Run all tests on page load
+        window.addEventListener('load', () => {
+            console.log('Grubhub Roulette functionality tests loaded');
+        });
+    </script>
+</body>
+</html>

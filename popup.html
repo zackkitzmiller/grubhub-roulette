@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+    <script src="js/popup.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1><img src="icons/icon128.png" alt="Grubhub Roulette" /></h1>
+      <p class="description">
+        Can't decide what to eat? Let us choose for you!
+      </p>
+
+      <button type="button" id="spinWheelButton" class="spin-button">
+        Spin the Wheel!
+      </button>
+
+      <div class="options-toggle">
+        <button type="button" id="optionsToggle" class="options-toggle-button">
+          ⚙️ Options
+          <span class="toggle-arrow">▼</span>
+        </button>
+      </div>
+
+      <div class="options" id="optionsPanel" style="display: none">
+        <label class="option-label">
+          <input type="checkbox" id="removeFeatured" checked />
+          Remove featured restaurants
+        </label>
+        <label class="option-label">
+          <input type="checkbox" id="loadMore" checked />
+          Load more restaurants (5 attempts)
+        </label>
+        <label class="option-label">
+          <input type="checkbox" id="aggressiveLoad" />
+          Aggressive loading (15 attempts)
+        </label>
+        <label class="option-label">
+          <input type="checkbox" id="preferRegular" />
+          Prefer regular spots over featured
+        </label>
+      </div>
+
+      <div id="status" class="status-message"></div>
+    </div>
+  </body>
+</html>

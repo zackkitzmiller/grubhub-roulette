@@ -1,0 +1,7 @@
+{
+  "semi": true,
+  "single_quote": true,
+  "tab_width": 2,
+  "trailing_comma": "es5",
+  "print_width": 80
+}
