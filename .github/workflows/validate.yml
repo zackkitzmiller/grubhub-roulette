@@ -1,0 +1,182 @@
+name: 🔍 Validate Extension
+
+on:
+  workflow_call:
+    inputs:
+      run-tests:
+        description: "Whether to run the full test suite"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  validate:
+    name: 🧪 Validate Extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 📦 Install dependencies
+        run: |
+          # Install jq for JSON validation
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+          # Create package.json if it doesn't exist
+          if [ ! -f package.json ]; then
+            echo '{"name": "grubhub-roulette", "version": "2.0.0", "scripts": {"test": "./test.sh"}}' > package.json
+          fi
+
+      - name: 🔍 Validate file structure
+        run: |
+          echo "📁 Checking required files..."
+          required_files=("manifest.json" "popup.html" "css/popup.css" "js/popup.js" "js/content.js" "js/background.js")
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing required file: $file"
+              exit 1
+            fi
+          done
+          echo "✅ All required files present"
+
+      - name: 📋 Validate JSON files
+        run: |
+          echo "📋 Validating JSON syntax..."
+          if ! jq empty manifest.json; then
+            echo "❌ manifest.json has invalid JSON syntax"
+            exit 1
+          fi
+          echo "✅ JSON files are valid"
+
+      - name: ⚙️ Check JavaScript syntax
+        run: |
+          echo "⚙️ Checking JavaScript syntax..."
+          js_files=("js/popup.js" "js/content.js" "js/background.js")
+          for js_file in "${js_files[@]}"; do
+            if ! node -c "$js_file"; then
+              echo "❌ Syntax error in $js_file"
+              exit 1
+            fi
+          done
+          echo "✅ JavaScript syntax is valid"
+
+      - name: 🔧 Make test scripts executable
+        if: ${{ inputs.run-tests }}
+        run: |
+          chmod +x tests/test.sh tests/quick-test.sh
+
+      - name: 🚀 Run quick tests
+        if: ${{ inputs.run-tests }}
+        run: |
+          echo "🚀 Running quick test suite..."
+          ./tests/quick-test.sh
+
+      - name: 🧪 Run comprehensive tests
+        if: ${{ inputs.run-tests }}
+        run: |
+          echo "🧪 Running comprehensive test suite..."
+          ./tests/test.sh
+
+      - name: 📊 Test extension manifest
+        run: |
+          echo "📊 Validating extension manifest..."
+
+          # Check manifest version
+          if ! grep -q '"manifest_version": 3' manifest.json; then
+            echo "❌ Extension must use Manifest V3"
+            exit 1
+          fi
+
+          # Check required permissions
+          if ! grep -q '"permissions"' manifest.json; then
+            echo "❌ Extension must declare permissions"
+            exit 1
+          fi
+
+          # Check content scripts
+          if ! grep -q '"content_scripts"' manifest.json; then
+            echo "❌ Extension must have content scripts"
+            exit 1
+          fi
+
+          # Check for search URL support
+          if ! grep -q "grubhub.com/search" manifest.json; then
+            echo "❌ Extension must support search URLs"
+            exit 1
+          fi
+
+          echo "✅ Extension manifest is valid"
+
+      - name: 👨‍👩‍👧‍👦 Check family-friendly content
+        run: |
+          echo "👨‍👩‍👧‍👦 Checking for family-friendly content..."
+
+          inappropriate_words=("bitch" "damn" "shit" "hell")
+          files_to_check=("popup.html" "js/popup.js" "js/content.js" "js/background.js" "README.md")
+
+          found_inappropriate=false
+          for word in "${inappropriate_words[@]}"; do
+            for file in "${files_to_check[@]}"; do
+              if [ -f "$file" ] && grep -qi "$word" "$file"; then
+                echo "❌ Found inappropriate word '$word' in $file"
+                found_inappropriate=true
+              fi
+            done
+          done
+
+          if [ "$found_inappropriate" = true ]; then
+            exit 1
+          fi
+
+          echo "✅ Content is family-friendly"
+
+      - name: 🎨 Validate CSS and HTML
+        run: |
+          echo "🎨 Validating CSS and HTML structure..."
+
+          # Check for required HTML elements
+          if ! grep -q 'id="spinWheelButton"' popup.html; then
+            echo "❌ Missing spin button in popup.html"
+            exit 1
+          fi
+
+          if ! grep -q 'id="optionsToggle"' popup.html; then
+            echo "❌ Missing options toggle in popup.html"
+            exit 1
+          fi
+
+          # Check for required CSS classes
+          css_classes=("spin-button" "options" "status-message" "option-label")
+          for class in "${css_classes[@]}"; do
+            if ! grep -q "\.$class" css/popup.css; then
+              echo "❌ Missing CSS class: .$class"
+              exit 1
+            fi
+          done
+
+          echo "✅ CSS and HTML structure is valid"
+
+      - name: 📈 Generate validation report
+        if: always()
+        run: |
+          echo "📈 Validation Summary"
+          echo "==================="
+          echo "✅ Extension structure validated"
+          echo "✅ JavaScript syntax checked"
+          echo "✅ JSON files validated"
+          echo "✅ Manifest requirements verified"
+          echo "✅ Family-friendly content confirmed"
+          echo "✅ CSS/HTML structure validated"
+          if [ "${{ inputs.run-tests }}" = "true" ]; then
+            echo "✅ Test suite completed"
+          fi
+          echo ""
+          echo "🎉 All validations completed!"

@@ -10,7 +10,10 @@
     "test:json": "jq empty manifest.json",
     "lint": "echo 'Linting JavaScript files...' && npm run test:syntax",
     "validate": "npm run test:json && npm run test:syntax",
-    "ci": "npm run validate && npm run test"
+    "ci": "npm run validate && npm run test",
+    "build": "./scripts/build.sh",
+    "build:version": "./scripts/build.sh",
+    "prebuild": "npm run validate"
   },
   "repository": {
     "type": "git",

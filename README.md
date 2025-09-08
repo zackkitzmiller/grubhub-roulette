@@ -147,6 +147,42 @@ The extension includes comprehensive error handling for common scenarios:
 - Simple DOM manipulation
 - Limited error handling
 
+## Building and Releasing
+
+### Local Build
+
+```bash
+# Build the extension for Chrome Web Store
+npm run build
+
+# Build with specific version
+./scripts/build.sh 2.0.0
+```
+
+This creates:
+
+- `dist/grubhub-roulette-v2.0.0.zip` - For Chrome Web Store submission
+- `dist/grubhub-roulette-v2.0.0-unpacked/` - For development/testing
+
+### Automated Release
+
+The extension uses GitHub Actions for automated releases to the Chrome Web Store:
+
+1. **Create a GitHub Release** with a version tag (e.g., `v2.0.0`)
+2. **The workflow automatically**:
+   - Validates the extension
+   - Builds the package
+   - Uploads to Chrome Web Store
+   - Creates release artifacts
+
+### Setup for Automated Publishing
+
+1. **Chrome Web Store Developer Account** ($5 one-time fee)
+2. **Google Cloud Console** project with Chrome Web Store API enabled
+3. **GitHub Secrets** configured with OAuth2 credentials
+
+See [docs/RELEASE.md](docs/RELEASE.md) for detailed setup instructions and complete release process documentation.
+
 ## Testing
 
 ### Automated Testing
