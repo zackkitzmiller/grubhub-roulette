@@ -109,10 +109,10 @@ The release process is fully automated using GitHub Actions. When you create a r
 
 ```bash
 # Build the extension locally
-npm run build
+just build
 
 # Or with specific version
-./scripts/build.sh 2.0.0
+just build-version 2.0.0
 ```
 
 This creates:
@@ -143,7 +143,7 @@ This creates:
 
 ### Pre-Release
 
-- [ ] All tests pass (`npm test`)
+- [ ] All tests pass (`just test`)
 - [ ] Extension works on all supported Grubhub pages
 - [ ] No console errors during normal operation
 - [ ] Version numbers are consistent across files
@@ -171,7 +171,7 @@ This creates:
 1. **Workflow Fails on Validation**
 
    - Check that all required files exist
-   - Verify JavaScript syntax with `npm run test:syntax`
+   - Verify JavaScript syntax with `just test-syntax`
    - Ensure JSON files are valid
 
 2. **Chrome Web Store Upload Fails**
@@ -188,16 +188,16 @@ This creates:
 
 ```bash
 # Test the build process locally
-npm run build
+just build
 
 # Validate extension files
-npm run validate
+just validate
 
 # Check JavaScript syntax
-npm run test:syntax
+just test-syntax
 
 # Run full test suite
-npm test
+just test
 ```
 
 ## 📈 Version Management
@@ -252,7 +252,7 @@ We follow [Semantic Versioning](https://semver.org/) (SemVer):
 
 If you encounter issues with the release process:
 
-1. Check the [GitHub Actions logs](https://github.com/your-username/grubhub-roulette/actions)
+1. Check the [GitHub Actions logs](https://github.com/zackkitzmiller/grubhub-roulette/actions)
 2. Review the [Chrome Web Store Developer Documentation](https://developer.chrome.com/docs/webstore/)
 3. Open an issue in the repository
 4. Check the [troubleshooting section](#troubleshooting) above

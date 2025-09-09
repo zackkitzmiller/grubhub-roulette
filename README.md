@@ -78,6 +78,25 @@ grubhub-roulette/
 4. Click "Load unpacked" and select the extension directory
 5. Navigate to a supported Grubhub page and click the extension icon
 
+## Development
+
+This project uses [Just](https://github.com/casey/just) as the command runner instead of npm scripts. Install Just and run `just --list` to see all available commands.
+
+```bash
+# Install Just (if not already installed)
+# On macOS: brew install just
+# On Linux: curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash
+
+# See all available commands
+just --list
+
+# Run tests
+just test
+
+# Build the extension
+just build
+```
+
 ## Usage
 
 1. **Navigate** to any supported Grubhub page with restaurant listings
@@ -153,10 +172,10 @@ The extension includes comprehensive error handling for common scenarios:
 
 ```bash
 # Build the extension for Chrome Web Store
-npm run build
+just build
 
 # Build with specific version
-./scripts/build.sh 2.0.0
+just build-version 2.0.0
 ```
 
 This creates:
@@ -191,16 +210,16 @@ The extension includes comprehensive automated tests that run on every commit:
 
 ```bash
 # Run quick tests
-npm run test:quick
+just test-quick
 
 # Run full test suite
-npm test
+just test
 
 # Check JavaScript syntax only
-npm run test:syntax
+just test-syntax
 
 # Validate JSON files
-npm run test:json
+just test-json
 ```
 
 ### Continuous Integration
@@ -226,7 +245,7 @@ The CI pipeline validates:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes with proper error handling
-4. **Run tests locally**: `npm test`
+4. **Run tests locally**: `just test`
 5. Test on multiple Grubhub page types
 6. Submit a pull request (tests will run automatically)
 

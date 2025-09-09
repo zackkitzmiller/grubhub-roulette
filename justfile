@@ -11,31 +11,31 @@ help:
 
 # Run all tests
 test:
-    npm test
+    ./tests/test.sh
 
 # Run quick tests
 test-quick:
-    npm run test:quick
+    ./tests/quick-test.sh
 
 # Run syntax validation
 test-syntax:
-    npm run test:syntax
+    node -c js/popup.js && node -c js/content.js && node -c js/background.js
 
 # Validate JSON files
 test-json:
-    npm run test:json
+    jq empty manifest.json
 
 # Run linting
 lint:
-    npm run lint
+    @echo 'Linting JavaScript files...' && just test-syntax
 
 # Validate all files
 validate:
-    npm run validate
+    just test-json && just test-syntax
 
 # Build the extension
 build:
-    npm run build
+    ./scripts/build.sh
 
 # Build with specific version
 build-version version:

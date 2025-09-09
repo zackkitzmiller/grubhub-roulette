@@ -3,18 +3,6 @@
   "version": "0.1.0",
   "description": "Can't decide what to eat? Let us choose for you! Randomly selects a restaurant from Grubhub listings.",
   "main": "background.js",
-  "scripts": {
-    "test": "./tests/test.sh",
-    "test:quick": "./tests/quick-test.sh",
-    "test:syntax": "node -c js/popup.js && node -c js/content.js && node -c js/background.js",
-    "test:json": "jq empty manifest.json",
-    "lint": "echo 'Linting JavaScript files...' && npm run test:syntax",
-    "validate": "npm run test:json && npm run test:syntax",
-    "ci": "npm run validate && npm run test",
-    "build": "./scripts/build.sh",
-    "build:version": "./scripts/build.sh",
-    "prebuild": "npm run validate"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zackkitzmiller/grubhub-roulette.git"
