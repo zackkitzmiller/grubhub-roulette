@@ -1,0 +1,2 @@
+# Ignore test files from formatting
+tests/test-functionality.html

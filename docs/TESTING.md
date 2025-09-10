@@ -177,7 +177,7 @@ console.log("[GrubhubRoulette] Starting wheel spin with options:", options);
 
 ## 📊 Test Results Template
 
-```
+```text
 Date: ___________
 Tester: ___________
 Chrome Version: ___________

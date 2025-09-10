@@ -78,6 +78,25 @@ grubhub-roulette/
 4. Click "Load unpacked" and select the extension directory
 5. Navigate to a supported Grubhub page and click the extension icon
 
+## Development
+
+This project uses [Just](https://github.com/casey/just) as the command runner instead of npm scripts. Install Just and run `just --list` to see all available commands.
+
+```bash
+# Install Just (if not already installed)
+# On macOS: brew install just
+# On Linux: curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash
+
+# See all available commands
+just --list
+
+# Run tests
+just test
+
+# Build the extension
+just build
+```
+
 ## Usage
 
 1. **Navigate** to any supported Grubhub page with restaurant listings
@@ -147,6 +166,42 @@ The extension includes comprehensive error handling for common scenarios:
 - Simple DOM manipulation
 - Limited error handling
 
+## Building and Releasing
+
+### Local Build
+
+```bash
+# Build the extension for Chrome Web Store
+just build
+
+# Build with specific version
+just build-version 2.0.0
+```
+
+This creates:
+
+- `dist/grubhub-roulette-v2.0.0.zip` - For Chrome Web Store submission
+- `dist/grubhub-roulette-v2.0.0-unpacked/` - For development/testing
+
+### Automated Release
+
+The extension uses GitHub Actions for automated releases to the Chrome Web Store:
+
+1. **Create a GitHub Release** with a version tag (e.g., `v2.0.0`)
+2. **The workflow automatically**:
+   - Validates the extension
+   - Builds the package
+   - Uploads to Chrome Web Store
+   - Creates release artifacts
+
+### Setup for Automated Publishing
+
+1. **Chrome Web Store Developer Account** ($5 one-time fee)
+2. **Google Cloud Console** project with Chrome Web Store API enabled
+3. **GitHub Secrets** configured with OAuth2 credentials
+
+See [docs/RELEASE.md](docs/RELEASE.md) for detailed setup instructions and complete release process documentation.
+
 ## Testing
 
 ### Automated Testing
@@ -155,16 +210,16 @@ The extension includes comprehensive automated tests that run on every commit:
 
 ```bash
 # Run quick tests
-npm run test:quick
+just test-quick
 
 # Run full test suite
-npm test
+just test
 
 # Check JavaScript syntax only
-npm run test:syntax
+just test-syntax
 
 # Validate JSON files
-npm run test:json
+just test-json
 ```
 
 ### Continuous Integration
@@ -190,7 +245,7 @@ The CI pipeline validates:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes with proper error handling
-4. **Run tests locally**: `npm test`
+4. **Run tests locally**: `just test`
 5. Test on multiple Grubhub page types
 6. Submit a pull request (tests will run automatically)
 

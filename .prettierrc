@@ -3,5 +3,11 @@
   "single_quote": true,
   "tab_width": 2,
   "trailing_comma": "es5",
-  "print_width": 80
+  "print_width": 80,
+  "overrides": [
+    {
+      "files": "justfile",
+      "options": { "parser": "yaml" }
+    }
+  ]
 }
