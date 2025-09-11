@@ -43,3 +43,4 @@ web-ext-artifacts/
 
 dist
 build
+*_creds.json
