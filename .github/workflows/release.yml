@@ -51,6 +51,9 @@ jobs:
 
           echo "✅ Updated version to $VERSION"
 
+          # Export VERSION for later steps
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: 🏗️ Build extension package
         run: |
           echo "🏗️ Building extension package..."
@@ -77,13 +80,13 @@ jobs:
           unzip -l grubhub-roulette-v${VERSION}.zip
 
       - name: 📤 Upload to Chrome Web Store
-        uses: google-chrome-web-store-upload@v1
+        uses: fregante/chrome-webstore-upload-action@v1
         with:
-          extensionId: ${{ secrets.CHROME_EXTENSION_ID }}
-          clientId: ${{ secrets.CHROME_CLIENT_ID }}
-          clientSecret: ${{ secrets.CHROME_CLIENT_SECRET }}
-          refreshToken: ${{ secrets.CHROME_REFRESH_TOKEN }}
-          zipFile: grubhub-roulette-v${VERSION}.zip
+          extension_id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client_id: ${{ secrets.CHROME_CLIENT_ID }}
+          client_secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh_token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          file: grubhub-roulette-v${{ env.VERSION }}.zip
           publish: true
 
       - name: 📊 Create release summary
@@ -100,9 +103,9 @@ jobs:
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: grubhub-roulette-v${VERSION}
+          name: grubhub-roulette-v${{ env.VERSION }}
           path: |
-            grubhub-roulette-v${VERSION}.zip
+            grubhub-roulette-v${{ env.VERSION }}.zip
             build/
           retention-days: 30
 
@@ -112,6 +115,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./grubhub-roulette-v${VERSION}.zip
-          asset_name: grubhub-roulette-v${VERSION}.zip
+          asset_path: ./grubhub-roulette-v${{ env.VERSION }}.zip
+          asset_name: grubhub-roulette-v${{ env.VERSION }}.zip
           asset_content_type: application/zip
