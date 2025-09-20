@@ -86,7 +86,7 @@ jobs:
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
           refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
-          file-path: build/grubhub-roulette-v${{ env.VERSION }}.zip
+          file-path: grubhub-roulette-v${{ env.VERSION }}.zip
           publish: true
 
       - name: 📊 Create release summary
