@@ -1,6 +1,6 @@
 {
   "name": "grubhub-roulette",
-  "version": "0.1.0",
+  "version": "1.0.0.",
   "description": "Can't decide what to eat? Let us choose for you! Randomly selects a restaurant from Grubhub listings.",
   "main": "background.js",
   "repository": {

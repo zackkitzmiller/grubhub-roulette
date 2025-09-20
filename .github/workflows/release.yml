@@ -44,8 +44,13 @@ jobs:
         run: |
           echo "📋 Updating version from release tag..."
 
-          # Get version from release tag (remove 'v' prefix if present)
+          # Get version from ref (remove 'v' prefix if present)
           VERSION=${GITHUB_REF_NAME#v}
+
+          # If ref is not a semver (e.g., 'main'), ignore it so we derive X.Y.Z.r
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[1-9][0-9]*)?$ ]]; then
+            VERSION=""
+          fi
 
           # If no version (manual run), derive X.Y.Z.r from manifest.json and existing tags
           if [ -z "$VERSION" ]; then
