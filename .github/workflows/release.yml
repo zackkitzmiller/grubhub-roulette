@@ -80,7 +80,7 @@ jobs:
           unzip -l grubhub-roulette-v${VERSION}.zip
 
       - name: 📤 Upload to Chrome Web Store
-        uses: fregante/chrome-webstore-upload-action@v1
+        uses: mnao305/chrome-extension-upload@v5.0.0
         with:
           extension_id: ${{ secrets.CHROME_EXTENSION_ID }}
           client_id: ${{ secrets.CHROME_CLIENT_ID }}
