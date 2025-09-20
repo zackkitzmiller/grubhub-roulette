@@ -19,8 +19,6 @@ jobs:
     name: 📦 Build & Publish Extension
     runs-on: ubuntu-latest
     needs: validate # Only run after validation passes
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && !contains(github.event.release.body, 'ci:manual-release'))
-
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
