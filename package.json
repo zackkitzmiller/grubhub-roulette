@@ -21,7 +21,6 @@
     "url": "https://github.com/zackkitzmiller/grubhub-roulette/issues"
   },
   "homepage": "https://github.com/zackkitzmiller/grubhub-roulette#readme",
-  "devDependencies": {},
   "engines": {
     "node": ">=16.0.0"
   },
@@ -32,5 +31,8 @@
     "js/",
     "icons/",
     "README.md"
-  ]
+  ],
+  "dependencies": {
+    "dotenv": "^17.2.2"
+  }
 }
